@@ -57,4 +57,4 @@ jobs:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
             az containerapp registry set -n ca-album-frontend -g rg-album-microservices-demo --server acralbummicroservices.azurecr.io --username  ${{ secrets.CAALBUMFRONTEND_REGISTRY_USERNAME }} --password ${{ secrets.CAALBUMFRONTEND_REGISTRY_PASSWORD }}
-            az containerapp update -n ca-album-frontend -g rg-album-microservices-demo --image acralbummicroservices.azurecr.io/ca-album-frontend:${{ github.sha }}
+            az containerapp update -n ca-album-frontend -g rg-album-microservices-demo --image acralbummicroservices.azurecr.io/ca-album-frontend:${{ github.sha }} --set-env-vars API_BASE_URL=https://ca-album-backend.greenglacier-d0b211ce.japaneast.azurecontainerapps.io
