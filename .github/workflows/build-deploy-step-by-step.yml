@@ -80,5 +80,5 @@ jobs:
             az containerapp update \
               --name ${{ env.CONTAINERAPP_NAME }} \
               --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-              --image ${{ env.CONTAINER_REGISTRY }}${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
+              --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
               --set-env-vars API_BASE_URL=${{ env.API_BASE_URL }}
