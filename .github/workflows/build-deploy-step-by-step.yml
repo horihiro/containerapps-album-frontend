@@ -4,7 +4,6 @@ on:
   # 手動実行用トリガー
   workflow_dispatch:      
 
-# Add env
 env:
   CONTAINER_REGISTRY: acralbummicroservices.azurecr.io
 
@@ -27,10 +26,18 @@ jobs:
       #   run: |
       #     echo ${{ env.REPOSITORY_NAME }}
 
-      # Add a step
       - name: Log in to container registry
         uses: docker/login-action@v1
         with:
           registry: ${{ env.CONTAINER_REGISTRY }}
           username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+      # Add a step
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+          file: ./Dockerfile
+          context: ./
