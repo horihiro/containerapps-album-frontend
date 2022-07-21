@@ -3,12 +3,12 @@ name: Trigger auto deployment for ca-album-frontend
 # When this action will be executed
 on:
   # Automatically trigger it when detected changes in repo
-  push:
-    branches: 
-      [ main ]
-    paths:
-    - '**'
-    - '.github/workflows/ca-album-frontend-AutoDeployTrigger-48160a1f-439c-439f-a7d4-d3f8e089de21.yml'
+  # push:
+  #   branches: 
+  #     [ main ]
+  #   paths:
+  #   - '**'
+  #   - '.github/workflows/ca-album-frontend-AutoDeployTrigger-48160a1f-439c-439f-a7d4-d3f8e089de21.yml'
 
   # Allow mannually trigger 
   workflow_dispatch:      
