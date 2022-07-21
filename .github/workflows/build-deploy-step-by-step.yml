@@ -8,6 +8,7 @@ env:
   CONTAINER_REGISTRY: acralbummicroservices.azurecr.io
   RESOURCE_GROUP_NAME: rg-album-microservices-demo
   CONTAINERAPP_NAME: ca-album-frontend
+  API_BASE_URL: https://ca-album-backend.internal.greenglacier-d0b211ce.japaneast.azurecontainerapps.io
 
 jobs:
   build:
@@ -80,4 +81,5 @@ jobs:
             az containerapp update \
               --name ${{ env.CONTAINERAPP_NAME }} \
               --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-              --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+              --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
+              --set-env-vars API_BASE_URL=${{ env.API_BASE_URL }}
