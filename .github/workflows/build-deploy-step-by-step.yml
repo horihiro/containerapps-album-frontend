@@ -6,6 +6,8 @@ on:
 
 env:
   CONTAINER_REGISTRY: acralbummicroservices.azurecr.io
+  RESOURCE_GROUP_NAME: rg-album-microservices-demo
+  CONTAINERAPP_NAME: ca-album-frontend
 
 jobs:
   build:
@@ -41,7 +43,6 @@ jobs:
           file: ./Dockerfile
           context: ./
 
-  # Add a job and steps
   deploy:
     runs-on: ubuntu-18.04
     needs: build
@@ -55,8 +56,6 @@ jobs:
       # - name: Confirm if env have REPOSITORY_NAME
       #   run: |
       #     echo ${{ env.REPOSITORY_NAME }}
-
-      # Add a step
       - name: Azure Login using OIDC
         uses: azure/login@v1
         with:
@@ -64,3 +63,21 @@ jobs:
           # client-id: ${{ secrets.AZURE_CLIENT_ID }}
           # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Add a step
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            # az extension add --upgrade --name containerapp
+            az containerapp registry set \
+              --name ${{ env.CONTAINERAPP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+              --server ${{ env.CONTAINER_REGISTRY }} \
+              --username  ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
+              --password ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+            az containerapp update \
+              --name ${{ env.CONTAINERAPP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+              --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
