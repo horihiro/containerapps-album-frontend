@@ -47,7 +47,7 @@ jobs:
       - name: Set repository name to env
         run: | 
           echo "ACR_NAME=${CONTAINER_REGISTRY%.azurecr.io}" >> $GITHUB_ENV
-          echo ${ACR_NAME}
+          echo ${{ env.ACR_NAME }}
 
       - name: Azure Login using OIDC
         uses: azure/login@v1
