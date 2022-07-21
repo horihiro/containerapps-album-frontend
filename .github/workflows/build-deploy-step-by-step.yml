@@ -7,7 +7,7 @@ on:
 env:
   CONTAINER_REGISTRY: acralbummicroservices.azurecr.io
   RESOURCE_GROUP_NAME: rg-album-microservices-demo
-  CONTAINERAPP_NAME: ca-album-frontend
+  CONTAINERAPP_NAME: conatinerapps-album-frontend
   API_BASE_URL: https://ca-album-backend.internal.greenglacier-d0b211ce.japaneast.azurecontainerapps.io
 
 jobs:
@@ -29,56 +29,56 @@ jobs:
       #   run: |
       #     echo ${{ env.REPOSITORY_NAME }}
 
-      - name: Log in to container registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.CONTAINER_REGISTRY }}
-          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+      # - name: Log in to container registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ${{ env.CONTAINER_REGISTRY }}
+      #     username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+      #     password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
 
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
-          file: ./Dockerfile
-          context: ./
+      # - name: Build and push container image to registry
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     push: true
+      #     tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+      #     file: ./Dockerfile
+      #     context: ./
 
-  # deploy:
-  #   runs-on: ubuntu-18.04
-  #   needs: build
-  # 
-  #   steps:
-  #     - name: Set repository name to env
-  #       run: | 
-  #         echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
-  # 
-  #     # Comment out or delete
-  #     # - name: Confirm if env have REPOSITORY_NAME
-  #     #   run: |
-  #     #     echo ${{ env.REPOSITORY_NAME }}
-  #     - name: Azure Login using OIDC
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.CAALBUMFRONTEND_AZURE_CREDENTIALS }}
-  #         # client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  # 
-  #     # Add a step
-  #     - name: Deploy to containerapp
-  #       uses: azure/CLI@v1
-  #       with:
-  #         inlineScript: |
-  #           az config set extension.use_dynamic_install=yes_without_prompt
-  #           # az extension add --upgrade --name containerapp
-  #           az containerapp registry set \
-  #             --name ${{ env.CONTAINERAPP_NAME }} \
-  #             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-  #             --server ${{ env.CONTAINER_REGISTRY }} \
-  #             --identity system
-  #           az containerapp update \
-  #             --name ${{ env.CONTAINERAPP_NAME }} \
-  #             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-  #             --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
-  #             --set-env-vars API_BASE_URL=${{ env.API_BASE_URL }}
+  deploy:
+    runs-on: ubuntu-18.04
+    needs: build
+  
+    steps:
+      - name: Set repository name to env
+        run: | 
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+  
+      # Comment out or delete
+      # - name: Confirm if env have REPOSITORY_NAME
+      #   run: |
+      #     echo ${{ env.REPOSITORY_NAME }}
+      - name: Azure Login using OIDC
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.CAALBUMFRONTEND_AZURE_CREDENTIALS }}
+          # client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+      # Add a step
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            # az extension add --upgrade --name containerapp
+            az containerapp registry set \
+              --name ${{ env.CONTAINERAPP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+              --server ${{ env.CONTAINER_REGISTRY }} \
+              --identity system
+            az containerapp update \
+              --name ${{ env.CONTAINERAPP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+              --image ${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
+              --set-env-vars API_BASE_URL=${{ env.API_BASE_URL }}
