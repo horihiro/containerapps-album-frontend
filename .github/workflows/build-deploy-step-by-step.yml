@@ -100,6 +100,7 @@ jobs:
               --target-port 3000 \
               --type external
             az containerapp update \
+              --container-name ${{ env.REPOSITORY_NAME }}
               --name ${{ env.CONTAINERAPP_NAME }} \
               --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
               --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
