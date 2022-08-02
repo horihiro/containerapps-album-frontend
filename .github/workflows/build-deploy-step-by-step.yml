@@ -5,7 +5,7 @@ on:
   workflow_dispatch:      
 
 env:
-  ACR_NAME: acrhorihiro5zj6sgyxorgfs
+  CONTAINER_REGISTRY: acrhorihiro5zj6sgyxorgfs.azurecr.io
   RESOURCE_GROUP_NAME: rg-container-cicd-handson-02
   CONTAINERAPP_NAME: ca-demo-uiapp
   API_BASE_URL: https://ca-demo-apiapp.mangomushroom-61080f38.japaneast.azurecontainerapps.io
