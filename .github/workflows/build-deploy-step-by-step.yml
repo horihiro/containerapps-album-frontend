@@ -10,6 +10,9 @@ env:
   CONTAINERAPP_NAME: ca-demo-uiapp
   API_BASE_URL: https://ca-demo-apiapp.mangomushroom-61080f38.japaneast.azurecontainerapps.io
 
+permissions:
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-18.04
