@@ -57,9 +57,9 @@ jobs:
 
       - name: docker login, build and push
         run: |
-          az acr login -n ${{ env.ACR_NAME }}
-          docker build . -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
-          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+          # az acr login -n ${{ env.ACR_NAME }}
+          docker build . -t ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+          docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
   deploy:
     runs-on: ubuntu-18.04
     needs: build
