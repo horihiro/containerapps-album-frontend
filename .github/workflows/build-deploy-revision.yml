@@ -1,0 +1,102 @@
+name: Trigger auto deployment
+
+on:
+  # 手動実行用トリガー
+  workflow_dispatch:      
+
+env:
+  CONTAINER_REGISTRY: acrhihorikarevisions.azurecr.io
+  RESOURCE_GROUP_NAME: rg-aca-revision-deploy
+  CONTAINERAPP_NAME: ctapp-aca-revision-deploy
+
+permissions:
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Set repository name to env
+        run: | 
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+
+      # - name: Confirm if env have REPOSITORY_NAME
+      #   run: |
+      #     echo ${{ env.REPOSITORY_NAME }}
+
+      - name: Log in to container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME_REVISIONS }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD_REVISIONS }}
+      
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+          file: ./Dockerfile
+          context: ./
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Add revision to ACA
+        uses: horihiro/aca-preview@v0.0.1-alpha
+        with:
+
+  # deploy:
+  #   runs-on: ubuntu-18.04
+  #   needs: build
+  
+  #   steps:
+  #     - name: Set repository name to env
+  #       run: | 
+  #         echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+  
+  #     # Comment out or delete
+  #     # - name: Confirm if env have REPOSITORY_NAME
+  #     #   run: |
+  #     #     echo ${{ env.REPOSITORY_NAME }}
+
+  #     - name: Azure Login using OIDC
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #         # client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+  #     # Add a step
+  #     - name: Deploy to containerapp
+  #       uses: azure/CLI@v1
+  #       with:
+  #         inlineScript: |
+  #           az extension add --upgrade --name containerapp
+  #           az containerapp registry set \
+  #             --name ${{ env.CONTAINERAPP_NAME }} \
+  #             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+  #             --server ${{ env.CONTAINER_REGISTRY }} \
+  #             --username  ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
+  #             --password ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+  #           az containerapp ingress enable \
+  #             --name ${{ env.CONTAINERAPP_NAME }} \
+  #             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+  #             --target-port 3000 \
+  #             --type external
+  #           az containerapp update \
+  #             --container-name ${{ env.REPOSITORY_NAME }} \
+  #             --name ${{ env.CONTAINERAPP_NAME }} \
+  #             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+  #             --image ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }} \
+  #             --set-env-vars API_BASE_URL=${{ env.API_BASE_URL }}
