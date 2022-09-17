@@ -54,6 +54,10 @@ jobs:
       - name: Add revision to ACA
         uses: horihiro/aca-preview@v0.0.1-alpha
         with:
+          resource-group: ${{ env.RESOURCE_GROUP_NAME }}
+          name: ${{ env.ctapp-aca-revision-deploy }}
+          revision-name-suffix: ${{ env.GITHUB_REPOSITORY_OWNER }}-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
+          image: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
 
   # deploy:
   #   runs-on: ubuntu-18.04
