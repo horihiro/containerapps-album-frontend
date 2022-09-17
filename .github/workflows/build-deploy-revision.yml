@@ -56,7 +56,7 @@ jobs:
         with:
           resource-group: ${{ env.RESOURCE_GROUP_NAME }}
           name: ${{ env.CONTAINERAPP_NAME }}
-          revision-name-suffix: ${{ env.GITHUB_REPOSITORY_OWNER }}-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
+          revision-name-suffix: ${{ github.repository_owner }}-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
           image: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
 
   # deploy:
