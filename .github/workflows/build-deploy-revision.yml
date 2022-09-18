@@ -26,6 +26,7 @@ jobs:
       - name: Set repository name to env
         run: | 
           echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
       # - name: Confirm if env have REPOSITORY_NAME
       #   run: |
@@ -56,7 +57,7 @@ jobs:
         with:
           resource-group: ${{ env.RESOURCE_GROUP_NAME }}
           name: ${{ env.CONTAINERAPP_NAME }}
-          revision-name-suffix: ${{ github.repository_owner }}-${{ env.REPOSITORY_NAME }}-${{ github.sha }}
+          revision-name-suffix: ${{ env.SHORT_SHA }}
           image: ${{ env.CONTAINER_REGISTRY }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
 
   # deploy:
