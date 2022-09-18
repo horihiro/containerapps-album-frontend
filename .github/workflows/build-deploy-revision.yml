@@ -7,7 +7,7 @@ on:
 env:
   CONTAINER_REGISTRY: acrhihorikarevisions.azurecr.io
   RESOURCE_GROUP_NAME: rg-aca-revision-deploy
-  CONTAINERAPP_NAME: ctapp-aca-revision-deploy
+  CONTAINERAPP_NAME: ctapp-aca-revision-deploy1
 
 permissions:
   id-token: write
