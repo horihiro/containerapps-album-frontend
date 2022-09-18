@@ -53,7 +53,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Add revision to ACA
-        uses: horihiro/aca-preview@v0.0.1-alpha
+        uses: horihiro/aca-preview@v0.0.1-alpha2
         with:
           resource-group: ${{ env.RESOURCE_GROUP_NAME }}
           name: ${{ env.CONTAINERAPP_NAME }}
